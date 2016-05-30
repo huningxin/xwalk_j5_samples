@@ -1,0 +1,11 @@
+{
+  "name": "xwalk-j5-samples",
+  "version": "0.0.1",
+  "description": "Crosswalk Johnny-Five Demo",
+  "main": "index.html",
+  "dependencies": {
+    "johnny-five": "^0.9.51"
+  },
+  "author": "",
+  "license": "BSD"
+}
