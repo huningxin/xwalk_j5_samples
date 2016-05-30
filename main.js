@@ -3,7 +3,7 @@ module.paths.push(process.cwd() + '/node_modules');
 
 var five = require('johnny-five');
 var board = new five.Board({repl: false});
-var led;
+var led, button;
 
 board.on('ready', function() {
   console.log('Johnny-Five is ready');
@@ -48,4 +48,23 @@ board.on('ready', function() {
   ledStopButton.onclick = function(e) {
     led.stop().off();
   };
+
+  // Plug the Button module into the
+  // Grove Shield's D4 jack
+  button = new five.Button(4);
+
+  var buttonId = document.getElementById('button-id');
+  var buttonPin = document.getElementById('button-pin');
+  var buttonStatus = document.getElementById('button-status');
+
+  buttonId.innerHTML = button.id;
+  buttonPin.innerHTML = button.pin;
+
+  button.on("press", function() {
+    buttonStatus.innerHTML = 'Pressed';
+  });
+
+  button.on("release", function() {
+    buttonStatus.innerHTML = 'Released';
+  });
 });
