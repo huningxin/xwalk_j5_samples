@@ -6,6 +6,6 @@
   "dependencies": {
     "johnny-five": "^0.9.51"
   },
-  "author": "",
-  "license": "BSD"
+  "author": "ningxin.hu@intel.com",
+  "license": "BSD-3-Clause"
 }
