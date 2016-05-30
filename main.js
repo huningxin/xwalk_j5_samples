@@ -63,6 +63,7 @@ board.on('ready', function() {
 
   buttonId.innerHTML = button.id;
   buttonPin.innerHTML = button.pin;
+  buttonStatus.innerHTML = 'Released';
 
   button.on("press", function() {
     buttonStatus.innerHTML = 'Pressed';
