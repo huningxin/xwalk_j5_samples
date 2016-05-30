@@ -3,7 +3,7 @@ module.paths.push(process.cwd() + '/node_modules');
 
 var five = require('johnny-five');
 var board = new five.Board({repl: false});
-var led, button;
+var led, button, rotary;
 
 board.on('ready', function() {
   console.log('Johnny-Five is ready');
@@ -71,5 +71,19 @@ board.on('ready', function() {
 
   button.on("release", function() {
     buttonStatus.innerHTML = 'Released';
+  });
+
+  // Plug the Rotary Angle sensor module
+  // into the Grove Shield's A0 jack
+  rotary = new five.Sensor("A0");
+
+  var rotaryId = document.getElementById('rotary-id');
+  var rotaryPin = document.getElementById('rotary-pin');
+  var rotaryValue = document.getElementById('rotary-value');
+  rotaryId.innerHTML = rotary.id;
+  rotaryPin.innerHTML = rotary.pin;
+
+  rotary.scale(0, 255).on("change", function() {
+    rotaryValue.innerHTML = this.value.toFixed();
   });
 });
