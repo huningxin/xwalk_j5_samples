@@ -19,10 +19,16 @@
       <div>Pin: <span id="led-pin"></span></div>
       <fieldset>
         <legend>Controls:</legend>
-        <button id="led-on">On</button>
-        <button id="led-off">Off</button>
-        <button id="led-blink">Start Blink</button>
-        <button id="led-stop">Stop Blink</button>
+        <div>
+          <button id="led-on">On</button>
+          <button id="led-off">Off</button>
+          <button id="led-blink">Start Blink</button>
+          <button id="led-stop">Stop Blink</button>
+        </div>
+        <div>
+          Brightness:
+          <input type="range" id="led-brightness" min="0" max="255">
+        </div>
       </fieldset>
     </fieldset>
     <fieldset>

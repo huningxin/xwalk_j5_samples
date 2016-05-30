@@ -48,6 +48,10 @@ board.on('ready', function() {
   ledStopButton.onclick = function(e) {
     led.stop().off();
   };
+  var ledBrightnessSlider = document.getElementById('led-brightness');
+  ledBrightnessSlider.onchange = function(e) {
+    led.brightness(e.target.value);
+  }
 
   // Plug the Button module into the
   // Grove Shield's D4 jack
