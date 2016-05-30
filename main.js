@@ -79,11 +79,11 @@ board.on('ready', function() {
 
   var rotaryId = document.getElementById('rotary-id');
   var rotaryPin = document.getElementById('rotary-pin');
-  var rotaryValue = document.getElementById('rotary-value');
+  var rotaryMeter = document.getElementById('rotary-meter');
   rotaryId.innerHTML = rotary.id;
   rotaryPin.innerHTML = rotary.pin;
 
   rotary.scale(0, 255).on("change", function() {
-    rotaryValue.innerHTML = this.value.toFixed();
+    rotaryMeter.value = this.value.toFixed();
   });
 });
