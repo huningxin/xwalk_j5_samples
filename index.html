@@ -43,6 +43,17 @@
       <div>Pin: <span id="rotary-pin"></span></div>
       <div>Value: <meter id="rotary-meter" value="0" min="0" max="255"></div>
     </fieldset>
+    <fieldset>
+      <legend>LCD:</legend>
+      <div>ID: <span id="lcd-id"></span></div>
+      <div>Controller: <span id="lcd-controller"></span></div>
+      <!--div>Color: <input id="lcd-color" type="color" /> </div-->
+      <div>Background Color: <span id='lcd-rgb'>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>
+      Red <input type="range" id="lcd-red" value="128" min="0" max="255"/>
+      Green: <input type="range" id="lcd-green" value="128" min="0" max="255"/>
+      Blue: <input type="range" id="lcd-blue" value="128" min="0" max="255"/></div>
+      <div>Text: <input type="text" id="lcd-text" maxlength="32"/></div>
+    </fieldset>
   </body>
   <script type="text/javascript" src="main.js"></script>
 </html>
