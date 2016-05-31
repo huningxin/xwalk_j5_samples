@@ -3,7 +3,7 @@ module.paths.push(process.cwd() + '/node_modules');
 
 var five = require('johnny-five');
 var board = new five.Board({repl: false});
-var led, button, rotary, lcd;
+var led, button, rotary, lcd, thermometer;
 
 board.on('ready', function() {
   console.log('Johnny-Five is ready');
@@ -155,5 +155,22 @@ board.on('ready', function() {
     lcd.cursor(0, 0).print(line1);
     lcd.cursor(1, 0).print(line2);
   }
+
+  // Plug the Temperature sensor module
+  // into the Grove Shield's A1 jack
+  thermometer = new five.Thermometer({
+    controller: "GROVE",
+    pin: "A1"
+  });
+
+  var thermometerId = document.getElementById('thermometer-id');
+  var thermometerPin = document.getElementById('thermometer-pin');
+  var thermometerData = document.getElementById('thermometer-data');
+  thermometerId.innerHTML = thermometer.id;
+  thermometerPin.innerHTML = thermometer.pin;
+
+  thermometer.on("data", function() {
+    thermometerData.innerHTML = Math.round(this.C);
+  });
 
 });
