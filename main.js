@@ -3,7 +3,7 @@ module.paths.push(process.cwd() + '/node_modules');
 
 var five = require('johnny-five');
 var board = new five.Board({repl: false});
-var led, button, rotary, lcd, thermometer;
+var led, button, rotary, lcd, thermometer, servo;
 
 board.on('ready', function() {
   console.log('Johnny-Five is ready');
@@ -172,5 +172,22 @@ board.on('ready', function() {
   thermometer.on("data", function() {
     thermometerData.innerHTML = Math.round(this.C);
   });
+
+  // Plug the Servo module
+  // into the Grove Shield's D5 jack
+  servo = new five.Servo(5);
+
+  var servoId = document.getElementById('servo-id');
+  var servoPin = document.getElementById('servo-pin');
+
+  servoId.innerHTML = servo.id;
+  servoPin.innerHTML = servo.pin;
+
+  servo.to(90);
+
+  var lservoAngleSlider = document.getElementById('servo-angle');
+  lservoAngleSlider.oninput = function(e) {
+    servo.to(e.target.value);
+  }
 
 });
