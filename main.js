@@ -4,6 +4,7 @@ module.paths.push(process.cwd() + '/node_modules');
 var five = require('johnny-five');
 var board = new five.Board({repl: false});
 var led, button, rotary, lcd, thermometer, servo;
+var mds= [];
 
 board.on('ready', function() {
   console.log('Johnny-Five is ready');
@@ -188,6 +189,105 @@ board.on('ready', function() {
   var lservoAngleSlider = document.getElementById('servo-angle');
   lservoAngleSlider.oninput = function(e) {
     servo.to(e.target.value);
+  }
+
+  // Plug the Motor Driver module
+  // into the I2C jack.
+  // Set the I2C address of driver
+  // with 1 motor to 8.
+  mds.push(new five.Motor({
+    controller: "GROVE_I2C_MOTOR_DRIVER",
+    address: 8,
+    pin: "A",
+  }));
+
+  mds.push(new five.Motor({
+    controller: "GROVE_I2C_MOTOR_DRIVER",
+    address: 8,
+    pin: "B",
+  }));
+
+  // Set the I2C address of driver
+  // with 1 motor to 9.
+  mds.push(new five.Motor({
+    controller: "GROVE_I2C_MOTOR_DRIVER",
+    address: 9,
+    pin: "B",
+  }));
+
+  var mdsForward = document.getElementById('mds-forward');
+  var mdsReverse = document.getElementById('mds-reverse');
+  var mdsSpeed = document.getElementById('mds-speed');
+
+  function releaseButton(e) {
+    e = e || window.event;
+    var button = e.which || e.button;
+    if (e.button == 0) { // left click
+      for (var i in mds) {
+        mds[i].stop();
+      }
+    }
+  }
+
+  mdsForward.onmousedown = function(e) {
+    e = e || window.event;
+    var button = e.which || e.button;
+    if (e.button == 0) { // left click
+      for (var i in mds) {
+        mds[i].forward(mdsSpeed.value);
+      }
+    }
+  };
+
+  mdsForward.onmouseup = releaseButton;
+
+  mdsReverse.onmousedown = function(e) {
+    e = e || window.event;
+    var button = e.which || e.button;
+    if (e.button == 0) { // left click
+      for (var i in mds) {
+        mds[i].reverse(mdsSpeed.value);
+      }
+    }
+  };
+
+  mdsReverse.onmouseup = releaseButton;
+
+  function setupMdControl(i) {
+    var mdForward = document.getElementById('md' + i + '-forward');
+    var mdReverse = document.getElementById('md' + i + '-reverse');
+
+    function releaseButton(e) {
+      e = e || window.event;
+      var button = e.which || e.button;
+      if (e.button == 0) { // left click
+        mds[i].stop();
+      }
+    }
+
+    mdForward.onmousedown = function(e) {
+      e = e || window.event;
+      var button = e.which || e.button;
+      if (e.button == 0) { // left click
+        mds[i].forward(mdsSpeed.value);
+      }
+    };
+
+    mdForward.onmouseup = releaseButton;
+
+    mdReverse.onmousedown = function(e) {
+      e = e || window.event;
+      var button = e.which || e.button;
+      if (e.button == 0) { // left click
+        mds[i].reverse(mdsSpeed.value);
+      }
+    };
+
+    mdReverse.onmouseup = releaseButton;
+  }
+
+  for (var i in mds) {
+    setupMdControl(i);
   }
 
 });
