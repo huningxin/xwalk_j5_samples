@@ -1,6 +1,3 @@
-// hack to add local node_modules path
-module.paths.push(process.cwd() + '/node_modules');
-
 var five = require('johnny-five');
 var board = new five.Board({repl: false});
 var led, button, rotary, lcd, thermometer, servo;
