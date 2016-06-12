@@ -34,7 +34,7 @@ var thermometerData = document.getElementById('thermometer-data');
 
 var servoId = document.getElementById('servo-id');
 var servoPin = document.getElementById('servo-pin');
-var lservoAngleSlider = document.getElementById('servo-angle');
+var servoAngleSlider = document.getElementById('servo-angle');
 
 var mdsForward = document.getElementById('mds-forward');
 var mdsReverse = document.getElementById('mds-reverse');
@@ -236,7 +236,7 @@ if (typeof require !== 'undefined') {
 
     servo.to(90);
 
-    lservoAngleSlider.oninput = function(e) {
+    servoAngleSlider.oninput = function(e) {
       servo.to(e.target.value);
     }
 
@@ -564,7 +564,7 @@ if (typeof require !== 'undefined') {
       client.send('lcd', 'print', line2);
     }
 
-    lservoAngleSlider.oninput = function(e) {
+    servoAngleSlider.oninput = function(e) {
       client.send('servo', 'to', e.target.value);
     }
 
