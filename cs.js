@@ -60,6 +60,90 @@ function InitServer(control) {
   wss.on("connection", function(ws) {
     console.log("websocket connection open");
     InitControlServer(ws, control);
+    InitWebRTCSignalServer(ws);
+  });
+}
+
+function InitWebRTCSignalServer(ws) {
+  console.log('InitWebRTCSignalServer');
+  var dispacher = new MessageDispatcher();
+  var client = new MessageClient(ws);
+  ws.on("message", function(data) {
+    var message = JSON.parse(data);
+    if (message.type === 'message') {
+      dispacher.dispatch(message.data);
+    }
+  });
+  function errorCallback(error){
+    console.log("WebRTC error: ", error);
+  }
+  var peerConnnection;
+  dispacher.on('signal', 'call', function() {
+    var servers = null;
+    peerConnection = new RTCPeerConnection(servers);
+    console.log("Created local peer connection object localPeerConnection");
+    peerConnection.onicecandidate = gotIceCandidate;
+    peerConnection.addStream(localStream);
+    peerConnection.createOffer(gotOffer, errorCallback);
+  });
+  function gotIceCandidate(event) {
+    if(event.candidate != null) {
+      client.send('signal', 'ice', event.candidate);
+    }
+  }
+  function gotOffer(description){
+    peerConnection.setLocalDescription(description, function() {
+      client.send('signal', 'offer', description);
+    }, errorCallback);
+  }
+  dispacher.on('signal', 'answer', function(description) {
+    peerConnection.setRemoteDescription(new RTCSessionDescription(description));
+  });
+  dispacher.on('signal', 'ice', function(ice) {
+    peerConnection.addIceCandidate(new RTCIceCandidate(ice));
+  });
+}
+
+function InitWebRTCSignalClient(ws) {
+  this.dispatcher = new MessageDispatcher();
+  var client = new MessageClient(ws);
+  ws.addEventListener('message', function (event) {
+    var message = JSON.parse(event.data);
+    if (message.type === 'message') {
+      self.dispatcher.dispatch(message.data);
+    }
+  });
+  var servers = null;
+  var peerConnection = new RTCPeerConnection(servers);
+  peerConnection.onicecandidate = gotIceCandidate;
+  peerConnection.onaddstream = gotRemoteStream;
+
+  client.send('signal', 'call');
+
+  function gotIceCandidate(event) {
+    if(event.candidate != null) {
+      client.send('signal', 'ice', event.candidate);
+    }
+  }
+  function gotRemoteStream(event) {
+    console.log("got remote stream");
+    var remoteVideo = document.querySelector("#camera-preview");
+    remoteVideo.src = window.URL.createObjectURL(event.stream);
+  }
+  function errorCallback(error){
+    console.log("WebRTC error: ", error);
+  }
+  dispatcher.on('signal', 'offer', function(description) {
+    peerConnection.setRemoteDescription(new RTCSessionDescription(description));
+    peerConnection.createAnswer(gotAnswer, errorCallback);
+  });
+  function gotAnswer(description) {
+    peerConnection.setLocalDescription(description, function() {
+      client.send('signal', 'answer', description);
+    }, errorCallback);
+  }
+  dispatcher.on('signal', 'ice', function(ice) {
+    peerConnection.addIceCandidate(new RTCIceCandidate(ice));
   });
 }
 
@@ -162,12 +246,15 @@ function InitClient() {
   var host = location.origin.replace(/^http/, 'ws')
   var ws = new WebSocket(host);
   var dispatcher = new MessageDispatcher();
-  ws.onmessage = function (event) {
+  ws.addEventListener('message', function (event) {
     var message = JSON.parse(event.data);
     if (message.type === 'message') {
       dispatcher.dispatch(message.data);
     }
-  };
+  });
+  ws.onopen = function (event) {
+    InitWebRTCSignalClient(ws);
+  }
   dispatcher.on('control', 'init', function(config) {
     var control = new ControlClient(ws, config);
     InitUI(control);
@@ -241,12 +328,12 @@ function ControlClient(ws, config) {
   }
 
   this.dispatcher = new MessageDispatcher();
-  ws.onmessage = function (event) {
+  ws.addEventListener('message', function (event) {
     var message = JSON.parse(event.data);
     if (message.type === 'message') {
       self.dispatcher.dispatch(message.data);
     }
-  };
+  });
   function eventHandler(event, handler) {
     this['_on' + event] = handler;
   };

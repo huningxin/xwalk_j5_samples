@@ -1,9 +1,15 @@
+navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+window.RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate || window.webkitRTCIceCandidate;
+window.RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription;
 
 if (typeof process !== 'undefined') {
   console.log('Running in Crosswalk + Node.js mode');
-
   var five = require('johnny-five');
   var board = new five.Board({repl: false});
+
+  // TODO: avoid to use global variable to share
+  var localStream;
 
   board.on('ready', function() {
     console.log('Johnny-Five is ready');
@@ -78,21 +84,17 @@ if (typeof process !== 'undefined') {
       address: 9,
       pin: "B",
     }));
-
     return control;
   }
 
   function InitCamera() {
-    navigator.getUserMedia = navigator.getUserMedia ||
-        navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
+    var localVideo = document.querySelector("#camera-preview");
     var constraints = {video: true};
 
     function successCallback(localMediaStream) {
-      window.stream = localMediaStream; // stream available to console
-      var video = document.querySelector("video");
-      video.src = window.URL.createObjectURL(localMediaStream);
-      video.play();
+      localStream = localMediaStream; // localStream available to WebRTCSignalServer
+      localVideo.src = window.URL.createObjectURL(localMediaStream);
+      localVideo.play();
     }
 
     function errorCallback(error){
@@ -101,6 +103,7 @@ if (typeof process !== 'undefined') {
 
     navigator.getUserMedia(constraints, successCallback, errorCallback);
   }
+
 } else {
   window.onload = function(e) {
     console.log('Running in browser mode.')
