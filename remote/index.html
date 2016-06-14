@@ -14,11 +14,45 @@
     }
   </style>
   <body>
+    <h3>Crosswalk Johnny-Five Demo: Remote UI</h3>
     <fieldset>
       <legend class="sensor">Board:</legend>
       <div>ID: <span id="board-id"></span></div>
       <div>Port: <span id="board-port"></span></div>
       <div>Status: <span id="board-status"></span></div>
+    </fieldset>
+    <fieldset>
+      <legend class="sensor">Camera:</legend>
+        <video id="camera-preview" autoplay></video>
+    </fieldset>
+    <fieldset>
+      <legend class="sensor">Motor Driver:</legend>
+        <div>
+          <button id="mds-forward">Forward</button>
+          <button id="mds-reverse">Reverse</button>
+          Speed: <input type="range" id="mds-speed" value="128" min="0" max="255"/>
+        </div>
+      <fieldset>
+        <legend>MD0:</legend>
+        <div>
+          <button id="md0-forward">Forward</button>
+          <button id="md0-reverse">Reverse</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>MD1:</legend>
+        <div>
+          <button id="md1-forward">Forward</button>
+          <button id="md1-reverse">Reverse</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>MD2:</legend>
+        <div>
+          <button id="md2-forward">Forward</button>
+          <button id="md2-reverse">Reverse</button>
+        </div>
+      </fieldset>
     </fieldset>
     <fieldset>
       <legend class="sensor">LED:</legend>
@@ -75,39 +109,6 @@
         Angle:
         <input type="range" id="servo-angle" value="90" min="0" max="180">
       </div>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">Motor Driver:</legend>
-        <div>
-          <button id="mds-forward">Forward</button>
-          <button id="mds-reverse">Reverse</button>
-          Speed: <input type="range" id="mds-speed" value="128" min="0" max="255"/>
-        </div>
-      <fieldset>
-        <legend>MD0:</legend>
-        <div>
-          <button id="md0-forward">Forward</button>
-          <button id="md0-reverse">Reverse</button>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>MD1:</legend>
-        <div>
-          <button id="md1-forward">Forward</button>
-          <button id="md1-reverse">Reverse</button>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>MD2:</legend>
-        <div>
-          <button id="md2-forward">Forward</button>
-          <button id="md2-reverse">Reverse</button>
-        </div>
-      </fieldset>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">Camera:</legend>
-        <video id="camera-preview" autoplay></video>
     </fieldset>
   </body>
   <script type="text/javascript" src="../common.js"></script>
