@@ -1,10 +1,10 @@
 console.log('Running in Crosswalk + Node.js mode');
-var five = require('johnny-five');
-var board = new five.Board({repl: false});
+//var five = require('johnny-five');
+//var board = new five.Board({repl: false});
 
 // TODO: avoid to use global variable to share
-var localStream;
-
+var colorStream, depthStream;
+/*
 board.on('ready', function() {
   console.log('Johnny-Five is ready');
 
@@ -16,6 +16,11 @@ board.on('ready', function() {
 
   InitCamera();
 });
+*/
+
+InitServer();
+
+InitCamera();
 
 function CreateControl(board) {
   var control = {board: board};
@@ -82,18 +87,55 @@ function CreateControl(board) {
 }
 
 function InitCamera() {
-  var localVideo = document.querySelector("#camera-preview");
-  var constraints = {video: true};
+  var colorVideo = document.querySelector("#color-preview");
+  var depthVideo = document.querySelector("#depth-preview");
 
-  function successCallback(localMediaStream) {
-    localStream = localMediaStream; // localStream available to WebRTCSignalServer
-    localVideo.src = window.URL.createObjectURL(localMediaStream);
-    localVideo.play();
+  function gotColorStream(stream) {
+    colorStream = stream; // colorStream available to WebRTCSignalServer
+    colorVideo.srcObject = stream;
+    colorVideo.play();
+  }
+
+  function gotDepthStream(stream) {
+    depthStream = stream; // colorStream available to WebRTCSignalServer
+    depthVideo.srcObject = stream;
+    depthVideo.play();
   }
 
   function errorCallback(error){
     console.log("navigator.getUserMedia error: ", error);
   }
 
-  navigator.getUserMedia(constraints, successCallback, errorCallback);
+  var depthCameraId = colorCameraId = '';
+
+  function gotDevices(deviceInfos) {
+    const depthCameraName = 'Intel RealSense R200-DEPTH';
+    const colorCameraName = 'Intel RealSense R200-COLOR'
+    for (var i = 0; i < deviceInfos.length; ++i) {
+      var deviceInfo = deviceInfos[i];
+      if (deviceInfo.kind === 'videoinput') {
+        console.log(deviceInfo.label);
+        if (deviceInfo.label === depthCameraName) {
+          depthCameraId = deviceInfo.deviceId;
+        } else if (deviceInfo.label === colorCameraName) {
+          colorCameraId = deviceInfo.deviceId;
+        }
+      }
+    }
+
+    if (depthCameraId !== '') {
+      var constraints = {video: {}};
+      constraints.video.deviceId = {exact: depthCameraId};
+      navigator.mediaDevices.getUserMedia(constraints).then(gotDepthStream, errorCallback);
+    }
+
+    if (colorCameraId !== '') {
+      var constraints = {video: {}};
+      constraints.video.deviceId = {exact: colorCameraId};
+      navigator.mediaDevices.getUserMedia(constraints).then(gotColorStream, errorCallback);
+    }
+
+  }
+
+  navigator.mediaDevices.enumerateDevices().then(gotDevices, errorCallback);
 }

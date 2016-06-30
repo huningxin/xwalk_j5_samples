@@ -139,10 +139,19 @@ function InitWebRTCSignalClient(ws) {
       client.send('signal', 'ice', event.candidate);
     }
   }
+
+  var streams = 0;
+
   function gotRemoteStream(event) {
-    console.log("got remote stream");
-    var remoteVideo = document.querySelector("#camera-preview");
-    remoteVideo.src = window.URL.createObjectURL(event.stream);
+    console.log("got remote stream " + streams);
+    if (streams == 0) {
+      var remoteVideo = document.querySelector("#color-preview");
+      remoteVideo.src = window.URL.createObjectURL(event.stream);
+    } else if (streams == 1) {
+      var remoteVideo = document.querySelector("#depth-preview");
+      remoteVideo.src = window.URL.createObjectURL(event.stream);
+    }
+    streams++;
   }
   function errorCallback(error){
     console.log("WebRTC error: ", error);

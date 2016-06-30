@@ -18,7 +18,7 @@ function InitServer(control) {
 
   wss.on("connection", function(ws) {
     console.log("websocket connection open");
-    InitControlServer(ws, control);
+    //InitControlServer(ws, control);
     InitWebRTCSignalServer(ws);
   });
 }
@@ -42,7 +42,8 @@ function InitWebRTCSignalServer(ws) {
     peerConnection = new RTCPeerConnection(servers);
     console.log("Created local peer connection object localPeerConnection");
     peerConnection.onicecandidate = gotIceCandidate;
-    peerConnection.addStream(localStream);
+    peerConnection.addStream(colorStream);
+    peerConnection.addStream(depthStream);
     peerConnection.createOffer(gotOffer, errorCallback);
   });
   function gotIceCandidate(event) {

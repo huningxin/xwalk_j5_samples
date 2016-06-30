@@ -10,6 +10,7 @@
     <script src="jquery-1.12.2/jquery.min.js"></script>
     <script src="bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
     <script>if (window.module) module = window.module;</script>
+    <script src="webrtc-adapter/adapter.js"></script>
   </head>
   <body>
   <div class="container">
@@ -101,8 +102,9 @@
         </div>
       </div>
       <div id="camera" class="tab-pane fade">
-        <div align="center">
-          <video id="camera-preview" autoplay></video>
+        <div class="row">
+          <div class="col-sm-6"><video id="color-preview" autoplay width="320" height="240"></video></div>
+          <div class="col-sm-6"><video id="depth-preview" autoplay width="320" height="240"></video></div>
         </div>
         <h4>
           Direction:
