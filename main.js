@@ -1,4 +1,3 @@
-console.log('Running in Crosswalk + Node.js mode');
 //var five = require('johnny-five');
 //var board = new five.Board({repl: false});
 
@@ -17,6 +16,8 @@ board.on('ready', function() {
   InitCamera();
 });
 */
+
+InitTitle();
 
 InitServer();
 
@@ -88,7 +89,7 @@ function CreateControl(board) {
 
 function InitCamera() {
   var colorVideo = document.querySelector("#color-preview");
-  var depthVideo = document.querySelector("#depth-preview");
+  //var depthVideo = document.querySelector("#depth-preview");
 
   function gotColorStream(stream) {
     colorStream = stream; // colorStream available to WebRTCSignalServer
@@ -123,11 +124,13 @@ function InitCamera() {
       }
     }
 
+    /*
     if (depthCameraId !== '') {
       var constraints = {video: {}};
       constraints.video.deviceId = {exact: depthCameraId};
       navigator.mediaDevices.getUserMedia(constraints).then(gotDepthStream, errorCallback);
     }
+    */
 
     if (colorCameraId !== '') {
       var constraints = {video: {}};
@@ -138,4 +141,88 @@ function InitCamera() {
   }
 
   navigator.mediaDevices.enumerateDevices().then(gotDevices, errorCallback);
+}
+
+var pt = null;
+var overlayCanvas, overlayContext;
+var ptRunning = false;
+
+var startPtButton = document.getElementById('pt-start');
+var stopPtButton = document.getElementById('pt-stop');
+
+startPtButton.onclick = function() {
+  StartPt();
+}
+
+stopPtButton.onclick = function () {
+  StopPt();
+}
+
+function InitPt() {
+  if (pt !== null)
+    return;
+  var addon = require('pt');
+  pt = new addon.PersonTracking();
+  overlayCanvas = document.getElementById('overlay');
+  overlayContext = overlayCanvas.getContext('2d');
+}
+
+function StartPt() {
+  if (ptRunning)
+    return;
+  InitPt();
+  pt.start(process._app_manifest_path + '/node_modules/pt/PersonTracking/ubuntu/data',
+           {gesturesEnabled: false,
+            recognitionEnabled: false,
+            sceletonEnabled: false,
+            trackingEnabled: true});
+  console.log('started');
+
+  pt.on('error', function(msg) {console.log('PT error event: ' + msg)});
+
+  pt.on('data', function() {
+    var data = pt.getData();
+  
+    drawPtData(overlayCanvas, overlayContext, data);
+
+    SendPtData(data);
+  });
+
+  ptRunning = true;
+}
+
+function StopPt() {
+  if(!ptRunning)
+    return;
+  pt.stop();
+  ptRunning = false;
+}
+
+var ptClient = null;
+
+function SendPtData(data) {
+  if (ptClient !== null) {
+    ptClient.send('pt', 'data', data);
+  }
+}
+
+function InitPtServer(ws) {
+  var dispacher = new MessageDispatcher();
+  ws.on("message", function(data) {
+    var message = JSON.parse(data);
+    if (message.type === 'message') {
+      dispacher.dispatch(message.data);
+    }
+  });
+  dispacher.on('pt', 'start', function() {
+    StartPt();
+  });
+  dispacher.on('pt', 'stop', function() {
+    StopPt();
+  });
+  ptClient = new MessageClient(ws);
+  console.log('Create PT client');
+  ws.on("close", function() {
+    ptClient = null;  
+  });
 }

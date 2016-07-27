@@ -20,6 +20,7 @@ function InitServer(control) {
     console.log("websocket connection open");
     //InitControlServer(ws, control);
     InitWebRTCSignalServer(ws);
+    InitPtServer(ws, pt);
   });
 }
 
@@ -43,7 +44,7 @@ function InitWebRTCSignalServer(ws) {
     console.log("Created local peer connection object localPeerConnection");
     peerConnection.onicecandidate = gotIceCandidate;
     peerConnection.addStream(colorStream);
-    peerConnection.addStream(depthStream);
+    //peerConnection.addStream(depthStream);
     peerConnection.createOffer(gotOffer, errorCallback);
   });
   function gotIceCandidate(event) {
@@ -158,4 +159,3 @@ function InitControlServer(ws, control) {
     control.thermometer.removeListener("data", dataCallback);
   });
 }
-

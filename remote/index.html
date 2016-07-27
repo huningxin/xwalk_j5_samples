@@ -4,116 +4,32 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
-    <title>Crosswalk Johnny-Five Demo</title>
+    <title>Crosswalk GT Demo</title>
+    <link rel="stylesheet" href="../bootstrap-3.3.6-dist/css/bootstrap.min.css">
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script src="../jquery-1.12.2/jquery.min.js"></script>
+    <script src="../bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
+    <script>if (window.module) module = window.module;</script>
   </head>
-  <style>
-    .sensor {
-      background-color: blue;
-      color: yellow;
-      font-weight: bold;
-    }
-  </style>
   <body>
-    <h3>Crosswalk Johnny-Five Demo: Remote UI</h3>
-    <fieldset>
-      <legend class="sensor">Board:</legend>
-      <div>ID: <span id="board-id"></span></div>
-      <div>Port: <span id="board-port"></span></div>
-      <div>Status: <span id="board-status"></span></div>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">Camera:</legend>
-        <video id="color-preview" autoplay></video>
-        <video id="depth-preview" autoplay></video>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">Motor Driver:</legend>
-        <div>
-          <button id="mds-forward">Forward</button>
-          <button id="mds-reverse">Reverse</button>
-          Speed: <input type="range" id="mds-speed" value="128" min="0" max="255"/>
-        </div>
-      <fieldset>
-        <legend>MD0:</legend>
-        <div>
-          <button id="md0-forward">Forward</button>
-          <button id="md0-reverse">Reverse</button>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>MD1:</legend>
-        <div>
-          <button id="md1-forward">Forward</button>
-          <button id="md1-reverse">Reverse</button>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>MD2:</legend>
-        <div>
-          <button id="md2-forward">Forward</button>
-          <button id="md2-reverse">Reverse</button>
-        </div>
-      </fieldset>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">LED:</legend>
-      <div>ID: <span id="led-id"></span></div>
-      <div>Pin: <span id="led-pin"></span></div>
-      <fieldset>
-        <legend>Controls:</legend>
-        <div>
-          <button id="led-on">On</button>
-          <button id="led-off">Off</button>
-          <button id="led-blink">Start Blink</button>
-          <button id="led-stop">Stop Blink</button>
-        </div>
-        <div>
-          Brightness:
-          <input type="range" id="led-brightness" min="0" max="255">
-        </div>
-      </fieldset>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">Button:</legend>
-      <div>ID: <span id="button-id"></span></div>
-      <div>Pin: <span id="button-pin"></span></div>
-      <div>Status: <span id="button-status"></span></div>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">Rotary Potentiometer:</legend>
-      <div>ID: <span id="rotary-id"></span></div>
-      <div>Pin: <span id="rotary-pin"></span></div>
-      <div>Value: <meter id="rotary-meter" value="0" min="0" max="255"></div>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">LCD:</legend>
-      <div>ID: <span id="lcd-id"></span></div>
-      <div>Controller: <span id="lcd-controller"></span></div>
-      <!--div>Color: <input id="lcd-color" type="color" /> </div-->
-      <div>Background Color: <span id='lcd-rgb'>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>
-      Red <input type="range" id="lcd-red" value="128" min="0" max="255"/>
-      Green: <input type="range" id="lcd-green" value="128" min="0" max="255"/>
-      Blue: <input type="range" id="lcd-blue" value="128" min="0" max="255"/></div>
-      <div>Text: <input type="text" id="lcd-text" maxlength="32"/></div>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">Thermometer:</legend>
-      <div>ID: <span id="thermometer-id"></span></div>
-      <div>Pin: <span id="thermometer-pin"></span></div>
-      <div>Celsius: <span id="thermometer-data"></span>&#8451</div>
-    </fieldset>
-    <fieldset>
-      <legend class="sensor">Servo:</legend>
-      <div>ID: <span id="servo-id"></span></div>
-      <div>Pin: <span id="servo-pin"></span></div>
-      <div>
-        Angle:
-        <input type="range" id="servo-angle" value="90" min="0" max="180">
+  <div class="container">
+    <h3>Crosswalk GT Demo : <span id='device'></span></h3>
+    <div class="row">
+      <div class="col-sm-12">
+        <video id="color-preview" autoplay width="640" height="480" style="z-index: -1;"></video>
+        <canvas id='overlay' width="640" height="480" style="left: 14px; top: 0px; border-style: solid; border-width: 1px; position: absolute; z-index: 1;"></canvas>
       </div>
-    </fieldset>
+    </div>
+    <h4>
+      Person Tracking:
+    </h4>
+    <div class="embed-responsive-item">
+      <button id="pt-start" type="button" class="btn btn-primary">Start</button>
+      <button id="pt-stop" type="button" class="btn btn-primary">Stop</button>
+    </div>
+  </div>
   </body>
   <script type="text/javascript" src="../webrtc-adapter/adapter.js"></script>
   <script type="text/javascript" src="../common.js"></script>
-  <script type="text/javascript" src="../ui.js"></script>
   <script type="text/javascript" src="client.js"></script>
 </html>

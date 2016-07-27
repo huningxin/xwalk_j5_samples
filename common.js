@@ -7,6 +7,18 @@ function Message (object, method, args) {
   };
 }
 
+function InitTitle() {
+  if (typeof process !== 'undefined') {
+    console.log('Running in Crosswalk + Node.js mode');
+    var device = document.getElementById('device');
+    device.innerHTML = 'Device GUI';
+  } else {
+    console.log('Running in Browser mode');
+    var device = document.getElementById('device');
+    device.innerHTML = 'Remote GUI';
+  }
+}
+
 function MessageClient(ws) {
   this.ws = ws;
 
@@ -37,4 +49,38 @@ function MessageDispatcher() {
       }
     }
   };
+}
+
+function drawPtData(overlayCanvas, overlayContext, data) {
+  overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+  var xScale = overlayCanvas.width / 640;
+  var yScale = overlayCanvas.height / 480;
+
+  //console.log('new data ' + Date.now());
+  //console.log('    number of people ' + data.numberOfPeople);
+  for (var i = 0; i < data.numberOfPeople; ++i) {
+    var data = data.personDataArray[i];
+    console.log('    id ' + data.id);
+    console.log('        bounding box ' + data.boundingBox.x + ', ', + data.boundingBox.y + ', ' + data.boundingBox.w + ', ' + data.boundingBox.h);
+    console.log('        center ' + data.center.x + ', ', + data.center.y);
+
+    // Draw bounding box
+    overlayContext.strokeStyle = 'yellow';
+    overlayContext.lineWidth = 3;
+    overlayContext.strokeRect(
+        data.boundingBox.x, data.boundingBox.y, data.boundingBox.w, data.boundingBox.h);
+
+    // Draw center
+    overlayContext.strokeStyle = 'green';
+    overlayContext.lineWidth = 3;
+    overlayContext.beginPath();
+    overlayContext.arc(data.center.x, data.center.y, 2, 0, Math.PI * 2, true);
+    overlayContext.stroke();
+
+    // Print user ID
+    overlayContext.font = '20px';
+    overlayContext.fillStyle = 'white';
+    overlayContext.fillText(
+        'User ID: ' + data.id, (data.boundingBox.x + 5) * xScale, (data.boundingBox.y + 10) * yScale);
+  }
 }

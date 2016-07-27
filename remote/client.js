@@ -1,5 +1,5 @@
 window.onload = function(e) {
-  console.log('Running in browser mode.')
+  InitTitle();
   InitClient();
 }
 
@@ -14,7 +14,8 @@ function InitClient() {
     }
   });
   ws.onopen = function (event) {
-    InitWebRTCSignalClient(ws);
+    new InitWebRTCSignalClient(ws);
+    new InitPtClient(ws);
   }
   dispatcher.on('control', 'init', function(config) {
     var control = new ControlClient(ws, config);
@@ -119,6 +120,7 @@ function ControlClient(ws, config) {
 }
 
 function InitWebRTCSignalClient(ws) {
+  var self = this;
   this.dispatcher = new MessageDispatcher();
   var client = new MessageClient(ws);
   ws.addEventListener('message', function (event) {
@@ -156,7 +158,7 @@ function InitWebRTCSignalClient(ws) {
   function errorCallback(error){
     console.log("WebRTC error: ", error);
   }
-  dispatcher.on('signal', 'offer', function(description) {
+  this.dispatcher.on('signal', 'offer', function(description) {
     peerConnection.setRemoteDescription(new RTCSessionDescription(description));
     peerConnection.createAnswer(gotAnswer, errorCallback);
   });
@@ -165,7 +167,39 @@ function InitWebRTCSignalClient(ws) {
       client.send('signal', 'answer', description);
     }, errorCallback);
   }
-  dispatcher.on('signal', 'ice', function(ice) {
+  this.dispatcher.on('signal', 'ice', function(ice) {
     peerConnection.addIceCandidate(new RTCIceCandidate(ice));
   });
+}
+
+function InitPtClient(ws) {
+  var overlayCanvas = document.getElementById('overlay');
+  var overlayContext = overlayCanvas.getContext('2d');
+
+  var self = this;
+  this.dispatcher = new MessageDispatcher();
+
+  ws.addEventListener('message', function (event) {
+    var message = JSON.parse(event.data);
+    if (message.type === 'message') {
+      self.dispatcher.dispatch(message.data);
+    }
+  });
+
+  this.dispatcher.on('pt', 'data', function(data) {
+    drawPtData(overlayCanvas, overlayContext, data);
+  });
+
+  this.client = new MessageClient(ws);
+
+  var startPtButton = document.getElementById('pt-start');
+  var stopPtButton = document.getElementById('pt-stop');
+
+  startPtButton.onclick = function() {
+    self.client.send('pt', 'start');
+  }
+
+  stopPtButton.onclick = function () {
+    self.client.send('pt', 'stop');
+  }
 }
