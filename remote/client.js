@@ -187,6 +187,7 @@ function InitPtClient(ws) {
   });
 
   this.dispatcher.on('pt', 'data', function(data) {
+    fpsCounter.update();
     drawPtData(overlayCanvas, overlayContext, data);
   });
 

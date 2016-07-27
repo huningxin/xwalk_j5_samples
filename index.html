@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <title>Crosswalk GT Demo</title>
     <link rel="stylesheet" href="bootstrap-3.3.6-dist/css/bootstrap.min.css">
-    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script>if (typeof module === 'object') {console.log(module); window.node_module = module; module = undefined;}</script>
     <script src="jquery-1.12.2/jquery.min.js"></script>
     <script src="bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
-    <script>if (window.module) module = window.module;</script>
+    <script>if (window.node_module) module = window.node_module;</script>
     <script src="webrtc-adapter/adapter.js"></script>
   </head>
   <body>
@@ -30,6 +30,7 @@
     </div>
   </div>
   </body>
+  <script type="text/javascript" src="libs/stats.min.js"></script>
   <script type="text/javascript" src="common.js"></script>
   <script type="text/javascript" src="server.js"></script>
   <script type="text/javascript" src="main.js"></script>

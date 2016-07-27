@@ -161,16 +161,17 @@ stopPtButton.onclick = function () {
 function InitPt() {
   if (pt !== null)
     return;
-  var addon = require('pt');
-  pt = new addon.PersonTracking();
+  var PersonTracking = require('pt').PersonTracking;
+  pt = new PersonTracking();
   overlayCanvas = document.getElementById('overlay');
   overlayContext = overlayCanvas.getContext('2d');
 }
 
+InitPt();
+
 function StartPt() {
   if (ptRunning)
     return;
-  InitPt();
   pt.start(process._app_manifest_path + '/node_modules/pt/PersonTracking/ubuntu/data',
            {gesturesEnabled: false,
             recognitionEnabled: false,
@@ -181,6 +182,7 @@ function StartPt() {
   pt.on('error', function(msg) {console.log('PT error event: ' + msg)});
 
   pt.on('data', function() {
+    fpsCounter.update();
     var data = pt.getData();
   
     drawPtData(overlayCanvas, overlayContext, data);
@@ -196,6 +198,10 @@ function StopPt() {
     return;
   pt.stop();
   ptRunning = false;
+  setTimeout(function() {
+    console.log('clear overlay');
+    overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+  }, 100);
 }
 
 var ptClient = null;
