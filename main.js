@@ -167,31 +167,14 @@ function InitCamera() {
       navigator.mediaDevices.getUserMedia(constraints).then(gotColorStream, errorCallback);
     }
 
-    if (infraredCameraId !== '') {
-      setTimeout(function() {
-        var constraints = {video: {}};
-        constraints.video.deviceId = {exact: infraredCameraId};
-        navigator.mediaDevices.getUserMedia(constraints).then(gotInfraredStream, errorCallback);
-      }, 1000);
-    }
-
-
-    if (infrared2CameraId !== '') {
-      setTimeout(function() {
-        var constraints = {video: {}};
-        constraints.video.deviceId = {exact: infrared2CameraId};
-        navigator.mediaDevices.getUserMedia(constraints).then(gotInfrared2Stream, errorCallback);
-      }, 2000);
-    }
-
     if (fisheyeCameraId !== '') {
       setTimeout(function() {
         var constraints = {video: {}};
         constraints.video.deviceId = {exact: fisheyeCameraId};
         navigator.mediaDevices.getUserMedia(constraints).then(gotFisheyeStream, errorCallback);
-      }, 3000);
+      }, 1000);
     }
-    
+
   }
 
   navigator.mediaDevices.enumerateDevices().then(gotDevices, errorCallback);

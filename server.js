@@ -45,8 +45,6 @@ function InitWebRTCSignalServer(ws) {
     peerConnection.onicecandidate = gotIceCandidate;
     peerConnection.addStream(colorStream);
     peerConnection.addStream(depthStream);
-    peerConnection.addStream(infraredStream);
-    peerConnection.addStream(infrared2Stream);
     peerConnection.addStream(fisheyeStream);
     peerConnection.createOffer(gotOffer, errorCallback);
   });

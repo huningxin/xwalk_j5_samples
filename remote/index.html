@@ -26,21 +26,21 @@
     </div>
     <div class="row">
       <div class="col-sm-6">
-        <video id="infrared-preview" autoplay width="320" height="240"></video>
-        <h3>Infrared Stream</h3>
-      </div>
-      <div class="col-sm-6">
-        <video id="infrared2-preview" autoplay width="320" height="240"></video>
-        <h3>Infrared2 Stream</h3>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-6">
         <video id="fisheye-preview" autoplay width="320" height="240"></video>
         <h3>Fisheye Stream</h3>
       </div>
       <div class="col-sm-6">
-        <h3>Motion events</h3>
+        <h4>Acc X: <meter id="acc-x" value="0" min="-10" max="10"></h4>
+        <h4>Acc Y: <meter id="acc-y" value="0" min="-10" max="10"></h4>
+        <h4>Acc Z: <meter id="acc-z" value="0" min="-10" max="10"></h4>
+        <h4>Gyro X: <meter id="gyro-x" value="0" min="-10" max="10"></h4>
+        <h4>Gyro Y: <meter id="gyro-y" value="0" min="-10" max="10"></h4>
+        <h4>Gyro Z: <meter id="gyro-z" value="0" min="-10" max="10"></h4>
+        <h3>Motion Tracking</h3>
+        <div class="embed-responsive-item">
+          <button id="mt-start" type="button" class="btn btn-primary">Start</button>
+          <button id="mt-stop" type="button" class="btn btn-primary">Stop</button>
+        </div>
       </div>
     </div>
   </div>
