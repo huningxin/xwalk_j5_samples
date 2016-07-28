@@ -15,7 +15,7 @@ function InitClient() {
   });
   ws.onopen = function (event) {
     new InitWebRTCSignalClient(ws);
-    new InitPtClient(ws);
+    new InitMtClient(ws);
   }
   dispatcher.on('control', 'init', function(config) {
     var control = new ControlClient(ws, config);
@@ -176,10 +176,7 @@ function InitWebRTCSignalClient(ws) {
   });
 }
 
-function InitPtClient(ws) {
-  var overlayCanvas = document.getElementById('overlay');
-  var overlayContext = overlayCanvas.getContext('2d');
-
+function InitMtClient(ws) {
   var self = this;
   this.dispatcher = new MessageDispatcher();
 
@@ -190,21 +187,20 @@ function InitPtClient(ws) {
     }
   });
 
-  this.dispatcher.on('pt', 'data', function(data) {
-    fpsCounter.update();
-    drawPtData(overlayCanvas, overlayContext, data);
+  this.dispatcher.on('mt', 'data', function(data) {
+    drawMtData(data);
   });
 
   this.client = new MessageClient(ws);
 
-  var startPtButton = document.getElementById('pt-start');
-  var stopPtButton = document.getElementById('pt-stop');
+  var startMtButton = document.getElementById('mt-start');
+  var stopMtButton = document.getElementById('mt-stop');
 
-  startPtButton.onclick = function() {
-    self.client.send('pt', 'start');
+  startMtButton.onclick = function() {
+    self.client.send('mt', 'start');
   }
 
-  stopPtButton.onclick = function () {
-    self.client.send('pt', 'stop');
+  stopMtButton.onclick = function () {
+    self.client.send('mt', 'stop');
   }
 }

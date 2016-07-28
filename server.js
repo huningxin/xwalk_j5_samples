@@ -20,7 +20,7 @@ function InitServer(control) {
     console.log("websocket connection open");
     //InitControlServer(ws, control);
     InitWebRTCSignalServer(ws);
-    InitPtServer(ws, pt);
+    InitMtServer(ws, mt);
   });
 }
 
