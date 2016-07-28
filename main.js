@@ -212,7 +212,6 @@ function StartMt() {
   mt.on('error', function(msg) {console.log('PT error event: ' + msg)});
 
   mt.on('data', function() {
-    fpsCounter.update();
     var data = mt.getData();
   
     drawMtData(data);

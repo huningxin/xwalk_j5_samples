@@ -89,8 +89,8 @@ var accX = document.querySelector("#acc-x");
 var accY = document.querySelector("#acc-y");
 var accZ = document.querySelector("#acc-z");
 var gyroX = document.querySelector("#gyro-x");
-var gyroY = document.querySelector("#gyro-Y");
-var gyroZ = document.querySelector("#gyro-Z");
+var gyroY = document.querySelector("#gyro-y");
+var gyroZ = document.querySelector("#gyro-z");
 
 function drawMtData(data) {
   console.log('on data');
