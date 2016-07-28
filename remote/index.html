@@ -13,19 +13,35 @@
   </head>
   <body>
   <div class="container">
-    <h3>Crosswalk GT Demo : <span id='device'></span></h3>
+    <h2>ZR300 Streams : <span id='device'></span></h2>
     <div class="row">
-      <div class="col-sm-12">
-        <video id="color-preview" autoplay width="640" height="480" style="z-index: -1;"></video>
-        <canvas id='overlay' width="640" height="480" style="left: 14px; top: 0px; border-style: solid; border-width: 1px; position: absolute; z-index: 1;"></canvas>
+      <div class="col-sm-6">
+        <video id="color-preview" autoplay width="320" height="240"></video>
+        <h3>Color Stream</h3>
+      </div>
+      <div class="col-sm-6">
+        <video id="depth-preview" autoplay width="320" height="240"></video>
+        <h3>Depth Stream</h3>
       </div>
     </div>
-    <h4>
-      Person Tracking:
-    </h4>
-    <div class="embed-responsive-item">
-      <button id="pt-start" type="button" class="btn btn-primary">Start</button>
-      <button id="pt-stop" type="button" class="btn btn-primary">Stop</button>
+    <div class="row">
+      <div class="col-sm-6">
+        <video id="infrared-preview" autoplay width="320" height="240"></video>
+        <h3>Infrared Stream</h3>
+      </div>
+      <div class="col-sm-6">
+        <video id="infrared2-preview" autoplay width="320" height="240"></video>
+        <h3>Infrared2 Stream</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <video id="fisheye-preview" autoplay width="320" height="240"></video>
+        <h3>Fisheye Stream</h3>
+      </div>
+      <div class="col-sm-6">
+        <h3>Motion events</h3>
+      </div>
     </div>
   </div>
   </body>

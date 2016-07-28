@@ -7,8 +7,6 @@ function Message (object, method, args) {
   };
 }
 
-var fpsCounter;
-
 function InitTitle() {
   if (typeof process !== 'undefined') {
     console.log('Running in Crosswalk + Node.js mode');
@@ -19,12 +17,6 @@ function InitTitle() {
     var device = document.getElementById('device');
     device.innerHTML = 'Remote GUI';
   }
-
-  fpsCounter = new Stats();
-  fpsCounter.domElement.style.position = 'absolute';
-  fpsCounter.domElement.style.top = '0px';
-  fpsCounter.domElement.style.right = '0px';
-  document.body.appendChild(fpsCounter.domElement);
 }
 
 function MessageClient(ws) {

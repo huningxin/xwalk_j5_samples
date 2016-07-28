@@ -2,7 +2,7 @@
 //var board = new five.Board({repl: false});
 
 // TODO: avoid to use global variable to share
-var colorStream, depthStream;
+var colorStream, depthStream, fisheyeStream, infraredStream, infrared2Stream;
 /*
 board.on('ready', function() {
   console.log('Johnny-Five is ready');
@@ -89,7 +89,10 @@ function CreateControl(board) {
 
 function InitCamera() {
   var colorVideo = document.querySelector("#color-preview");
-  //var depthVideo = document.querySelector("#depth-preview");
+  var depthVideo = document.querySelector("#depth-preview");
+  var infraredVideo = document.querySelector("#infrared-preview");
+  var infrared2Video = document.querySelector("#infrared2-preview");
+  var fisheyeVideo = document.querySelector("#fisheye-preview");
 
   function gotColorStream(stream) {
     colorStream = stream; // colorStream available to WebRTCSignalServer
@@ -103,15 +106,36 @@ function InitCamera() {
     depthVideo.play();
   }
 
+  function gotInfraredStream(stream) {
+    infraredStream = stream; // colorStream available to WebRTCSignalServer
+    infraredVideo.srcObject = stream;
+    infraredVideo.play();
+  }
+
+  function gotInfrared2Stream(stream) {
+    infrared2Stream = stream; // colorStream available to WebRTCSignalServer
+    infrared2Video.srcObject = stream;
+    infrared2Video.play();
+  }
+
+  function gotFisheyeStream(stream) {
+    fisheyeStream = stream; // colorStream available to WebRTCSignalServer
+    fisheyeVideo.srcObject = stream;
+    fisheyeVideo.play();
+  }
+
   function errorCallback(error){
     console.log("navigator.getUserMedia error: ", error);
   }
 
-  var depthCameraId = colorCameraId = '';
+  var depthCameraId = colorCameraId = fisheyeCameraId = '';
 
   function gotDevices(deviceInfos) {
-    const depthCameraName = 'Intel RealSense R200-DEPTH';
-    const colorCameraName = 'Intel RealSense R200-COLOR'
+    const depthCameraName = 'Intel RealSense ZR300-DEPTH';
+    const colorCameraName = 'Intel RealSense ZR300-COLOR';
+    const infraredCameraName = 'Intel RealSense ZR300-INFRARED';
+    const infrared2CameraName = 'Intel RealSense ZR300-INFRARED2';
+    const fisheyeCameraName = 'Intel RealSense ZR300-FISHEYE';
     for (var i = 0; i < deviceInfos.length; ++i) {
       var deviceInfo = deviceInfos[i];
       if (deviceInfo.kind === 'videoinput') {
@@ -120,17 +144,22 @@ function InitCamera() {
           depthCameraId = deviceInfo.deviceId;
         } else if (deviceInfo.label === colorCameraName) {
           colorCameraId = deviceInfo.deviceId;
+        } else if (deviceInfo.label === infraredCameraName) {
+          infraredCameraId = deviceInfo.deviceId;
+        } else if (deviceInfo.label === infrared2CameraName) {
+          infrared2CameraId = deviceInfo.deviceId;
+        } else if (deviceInfo.label === fisheyeCameraName) {
+          fisheyeCameraId = deviceInfo.deviceId;
         }
       }
     }
 
-    /*
+
     if (depthCameraId !== '') {
       var constraints = {video: {}};
       constraints.video.deviceId = {exact: depthCameraId};
       navigator.mediaDevices.getUserMedia(constraints).then(gotDepthStream, errorCallback);
     }
-    */
 
     if (colorCameraId !== '') {
       var constraints = {video: {}};
@@ -138,97 +167,32 @@ function InitCamera() {
       navigator.mediaDevices.getUserMedia(constraints).then(gotColorStream, errorCallback);
     }
 
+    if (infraredCameraId !== '') {
+      setTimeout(function() {
+        var constraints = {video: {}};
+        constraints.video.deviceId = {exact: infraredCameraId};
+        navigator.mediaDevices.getUserMedia(constraints).then(gotInfraredStream, errorCallback);
+      }, 1000);
+    }
+
+
+    if (infrared2CameraId !== '') {
+      setTimeout(function() {
+        var constraints = {video: {}};
+        constraints.video.deviceId = {exact: infrared2CameraId};
+        navigator.mediaDevices.getUserMedia(constraints).then(gotInfrared2Stream, errorCallback);
+      }, 2000);
+    }
+
+    if (fisheyeCameraId !== '') {
+      setTimeout(function() {
+        var constraints = {video: {}};
+        constraints.video.deviceId = {exact: fisheyeCameraId};
+        navigator.mediaDevices.getUserMedia(constraints).then(gotFisheyeStream, errorCallback);
+      }, 3000);
+    }
+    
   }
 
   navigator.mediaDevices.enumerateDevices().then(gotDevices, errorCallback);
-}
-
-var pt = null;
-var overlayCanvas, overlayContext;
-var ptRunning = false;
-
-var startPtButton = document.getElementById('pt-start');
-var stopPtButton = document.getElementById('pt-stop');
-
-startPtButton.onclick = function() {
-  StartPt();
-}
-
-stopPtButton.onclick = function () {
-  StopPt();
-}
-
-function InitPt() {
-  if (pt !== null)
-    return;
-  var PersonTracking = require('pt').PersonTracking;
-  pt = new PersonTracking();
-  overlayCanvas = document.getElementById('overlay');
-  overlayContext = overlayCanvas.getContext('2d');
-}
-
-InitPt();
-
-function StartPt() {
-  if (ptRunning)
-    return;
-  pt.start(process._app_manifest_path + '/node_modules/pt/PersonTracking/ubuntu/data',
-           {gesturesEnabled: false,
-            recognitionEnabled: false,
-            sceletonEnabled: false,
-            trackingEnabled: true});
-  console.log('started');
-
-  pt.on('error', function(msg) {console.log('PT error event: ' + msg)});
-
-  pt.on('data', function() {
-    fpsCounter.update();
-    var data = pt.getData();
-  
-    drawPtData(overlayCanvas, overlayContext, data);
-
-    SendPtData(data);
-  });
-
-  ptRunning = true;
-}
-
-function StopPt() {
-  if(!ptRunning)
-    return;
-  pt.stop();
-  ptRunning = false;
-  setTimeout(function() {
-    console.log('clear overlay');
-    overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-  }, 100);
-}
-
-var ptClient = null;
-
-function SendPtData(data) {
-  if (ptClient !== null) {
-    ptClient.send('pt', 'data', data);
-  }
-}
-
-function InitPtServer(ws) {
-  var dispacher = new MessageDispatcher();
-  ws.on("message", function(data) {
-    var message = JSON.parse(data);
-    if (message.type === 'message') {
-      dispacher.dispatch(message.data);
-    }
-  });
-  dispacher.on('pt', 'start', function() {
-    StartPt();
-  });
-  dispacher.on('pt', 'stop', function() {
-    StopPt();
-  });
-  ptClient = new MessageClient(ws);
-  console.log('Create PT client');
-  ws.on("close", function() {
-    ptClient = null;  
-  });
 }

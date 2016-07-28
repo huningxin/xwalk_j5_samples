@@ -44,7 +44,10 @@ function InitWebRTCSignalServer(ws) {
     console.log("Created local peer connection object localPeerConnection");
     peerConnection.onicecandidate = gotIceCandidate;
     peerConnection.addStream(colorStream);
-    //peerConnection.addStream(depthStream);
+    peerConnection.addStream(depthStream);
+    peerConnection.addStream(infraredStream);
+    peerConnection.addStream(infrared2Stream);
+    peerConnection.addStream(fisheyeStream);
     peerConnection.createOffer(gotOffer, errorCallback);
   });
   function gotIceCandidate(event) {

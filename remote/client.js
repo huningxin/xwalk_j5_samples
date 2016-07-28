@@ -152,7 +152,17 @@ function InitWebRTCSignalClient(ws) {
     } else if (streams == 1) {
       var remoteVideo = document.querySelector("#depth-preview");
       remoteVideo.src = window.URL.createObjectURL(event.stream);
+    } else if (streams == 2) {
+      var remoteVideo = document.querySelector("#infrared-preview");
+      remoteVideo.src = window.URL.createObjectURL(event.stream);
+    } else if (streams == 3) {
+      var remoteVideo = document.querySelector("#infrared2-preview");
+      remoteVideo.src = window.URL.createObjectURL(event.stream);
+    } else if (streams == 4) {
+      var remoteVideo = document.querySelector("#fisheye-preview");
+      remoteVideo.src = window.URL.createObjectURL(event.stream);
     }
+
     streams++;
   }
   function errorCallback(error){
