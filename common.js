@@ -84,3 +84,25 @@ function drawPtData(overlayCanvas, overlayContext, data) {
         'User ID: ' + data.id, (data.boundingBox.x + 5) * xScale, (data.boundingBox.y + 10) * yScale);
   }
 }
+
+var accX = document.querySelector("#acc-x");
+var accY = document.querySelector("#acc-y");
+var accZ = document.querySelector("#acc-z");
+var gyroX = document.querySelector("#gyro-x");
+var gyroY = document.querySelector("#gyro-Y");
+var gyroZ = document.querySelector("#gyro-Z");
+
+function drawMtData(data) {
+  console.log('on data');
+  console.log('    accelerometer: ' + data.accelerometer.x + ', ' + data.accelerometer.y + ', ' + data.accelerometer.z);
+  console.log('    gyroscope: ' + data.gyroscope.x + ', ' + data.gyroscope.y + ', ' + data.gyroscope.z);
+
+  accX.value = data.accelerometer.x;
+  accY.value = data.accelerometer.y;
+  accZ.value = data.accelerometer.z;
+
+  gyroX.value = data.gyroscope.x;
+  gyroY.value = data.gyroscope.y;
+  gyroZ.value = data.gyroscope.z;
+
+}

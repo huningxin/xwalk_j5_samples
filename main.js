@@ -179,3 +179,82 @@ function InitCamera() {
 
   navigator.mediaDevices.enumerateDevices().then(gotDevices, errorCallback);
 }
+
+var mt = null;
+var mtRunning = false;
+
+var startMtButton = document.getElementById('mt-start');
+var stopMtButton = document.getElementById('mt-stop');
+
+startMtButton.onclick = function() {
+  StartMt();
+}
+
+stopMtButton.onclick = function () {
+  StopMt();
+}
+
+function InitMt() {
+  if (mt !== null)
+    return;
+  var MotionTracking = require('mt').MotionTracking;
+  mt = new MotionTracking();
+}
+
+InitMt();
+
+function StartMt() {
+  if (mtRunning)
+    return;
+  mt.start();
+  console.log('started');
+
+  mt.on('error', function(msg) {console.log('PT error event: ' + msg)});
+
+  mt.on('data', function() {
+    fpsCounter.update();
+    var data = mt.getData();
+  
+    drawMtData(data);
+
+    SendMtData(data);
+  });
+
+  mtRunning = true;
+}
+
+function StopMt() {
+  if(!mtRunning)
+    return;
+  mt.stop();
+  mtRunning = false;
+}
+
+var mtClient = null;
+
+function SendMtData(data) {
+  if (mtClient !== null) {
+    mtClient.send('mt', 'data', data);
+  }
+}
+
+function InitMtServer(ws) {
+  var dispacher = new MessageDispatcher();
+  ws.on("message", function(data) {
+    var message = JSON.parse(data);
+    if (message.type === 'message') {
+      dispacher.dispatch(message.data);
+    }
+  });
+  dispacher.on('mt', 'start', function() {
+    StartMt();
+  });
+  dispacher.on('mt', 'stop', function() {
+    StopMt();
+  });
+  mtClient = new MessageClient(ws);
+  console.log('Create PT client');
+  ws.on("close", function() {
+    mtClient = null;  
+  });
+}
